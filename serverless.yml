@@ -17,10 +17,11 @@ provider:
 functions:
   cronJobHandler:
     handler: dist/handler.main
+    timeout: 120
     events:
       - schedule:
-          rate: rate(1 minute)
-          enabled: true
+          rate: rate(1 hour)
+          enabled: false
 
 plugins:
   - serverless-offline
