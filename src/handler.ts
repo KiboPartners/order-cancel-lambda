@@ -18,19 +18,9 @@ export const main = async (event: APIGatewayEvent): Promise<APIGatewayProxyResul
       for (let order of orders.items) {
         try {
 
-          const orderActionConfig = new Configuration({
-            tenantId: process.env.KIBO_TENANT,
-            siteId: order.siteId!,
-            sharedSecret: process.env.KIBO_SHARED_SECRET,
-            clientId: process.env.KIBO_CLIENT_ID,
-            authHost: 'home.mozu.com',
-            apiEnv: 'sandbox',
-          })
-
-          const orderActionResource = new OrderApi(orderActionConfig)
           const orderId = order.id || '0'
 
-          await orderActionResource.performOrderAction({ orderId: orderId, orderAction: { actionName: "CancelOrder" } });
+          await ordersResource.performOrderAction({ orderId: orderId, orderAction: { actionName: "CancelOrder" } }, { headers: { "x-vol-site": `${order.siteId}` } });
 
           cancelledOrders.push(`${order.orderNumber}: ${order.id}`)
 
