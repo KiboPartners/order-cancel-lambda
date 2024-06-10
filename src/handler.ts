@@ -19,8 +19,9 @@ export const main = async (event: APIGatewayEvent): Promise<APIGatewayProxyResul
         try {
 
           const orderId = order.id || '0'
+          const siteId = order.siteId || 0
 
-          await ordersResource.performOrderAction({ orderId: orderId, orderAction: { actionName: "CancelOrder" } }, { headers: { "x-vol-site": `${order.siteId}` } });
+          await ordersResource.performOrderAction({ orderId: orderId, orderAction: { actionName: "CancelOrder" } }, adjustSiteHeader(siteId));
 
           cancelledOrders.push(`${order.orderNumber}: ${order.id}`)
 
@@ -54,4 +55,12 @@ const getModifiedTime = () => {
   const isoTime = new Date(modifiedTime).toISOString();
 
   return isoTime;
+}
+
+const adjustSiteHeader = (site: number) => {
+  return (incomingOptions: any) => {
+    incomingOptions.init.headers['x-vol-site'] = `${site}`
+
+    return incomingOptions.init
+  }
 }
